@@ -24,11 +24,11 @@ class UserAdmin(UserAdmin):
             'fields': ('email', 'password1','username'),
         }),
     )
-    list_display = ('uuid', 'email','first_name','last_name','username','email','date_joined','is_verification','pay_id','is_active')
+    list_display = ('id', 'email','first_name','last_name','username','email','date_joined','is_verification','pay_id','is_active')
 
-    list_display_links = ('uuid',)
+    list_display_links = ('id',)
     list_filter = ('is_staff', 'is_superuser', 'is_active', 'groups',)
-    search_fields = ('first_name', 'last_name', 'uuid', 'email',)
-    ordering = ('-uuid',)
+    search_fields = ('first_name', 'last_name', 'id', 'email',)
+    ordering = ('-id',)
     filter_horizontal = ('groups', 'user_permissions',)
     readonly_fields = ('last_login',)
