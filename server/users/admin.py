@@ -3,7 +3,6 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from users.models.users import User
 from django.utils.translation import gettext_lazy as _
-from django.db.models import Count
 
 
 @admin.register(User)
@@ -14,7 +13,7 @@ class UserAdmin(UserAdmin):
         (_('Личная информация'),
          {'fields': ('first_name', 'last_name',)}),
         (_('Permissions'), {
-            'fields': ('is_verification', 'is_staff',  'is_superuser', 'groups', 'user_permissions',),
+            'fields': ('is_verification', 'is_staff',  'is_superuser', 'groups', 'user_permissions','is_active',),
         }),
         (_('Important dates'), {'fields': ('last_login',)}),
     )

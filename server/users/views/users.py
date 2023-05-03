@@ -4,11 +4,7 @@ from users.models.users import User
 from knox import views as knox_views
 from django.contrib.auth import login
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework import viewsets
-from rest_framework.exceptions import MethodNotAllowed
-from rest_framework.decorators import action
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, status
 from drf_spectacular.utils import extend_schema_view, extend_schema, OpenApiResponse
 
 @extend_schema_view(

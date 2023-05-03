@@ -27,7 +27,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'drf_spectacular',
-    'djoser',
     'corsheaders',
     'knox',
 ]
@@ -65,15 +64,13 @@ REST_FRAMEWORK = {
         'rest_framework.parsers.MultiPartParser',
         'rest_framework.parsers.FileUploadParser',
     ),
-    # 'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    # 'DEFAULT_PAGINATION_CLASS': 'common.pagination.BasePagination',
 }
 
 APPEND_SLASH=False
 
 REST_KNOX = {
-    'USER_SERIALIZER': 'users.serializers.users.UserSerializer',
+    'USER_SERIALIZER': 'users.serializers.users.CreateUserSerializer',
     'TOKEN_TTL': timedelta(hours=48)
 }
 
@@ -103,11 +100,11 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': env.str('PG_DATABASE', 'postgres'),
-        'USER': env.str('PG_USER', 'postgres'),
-        'PASSWORD': env.str('PG_PASSWORD', 'postgres'),
-        'HOST': env.str('DB_HOST', 'localhost'),
-        'PORT': env.int('DB_PORT', 5432),
+        'NAME': env.str('POSTGRES_DB', 'postgres'),
+        'USER': env.str('POSTGRES_USER', 'postgres'),
+        'PASSWORD': env.str('POSTGRES_PASSWORD', 'postgres'),
+        'HOST': env.str('POSTGRES_HOST', 'db'),
+        'PORT': env.str('POSTGRES_PORT', 5432),
     },
     'extra': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -191,39 +188,6 @@ SPECTACULAR_SETTINGS = {
     'ENABLE_DJANGO_DEPLOY_CHECK': False,
     'DISABLE_ERRORS_AND_WARNINGS': True,
 }
-
-DJOSER = {
-    'PASSWORD_RESET_CONFIRM_URL': '#/password/reset/confirm/{uid}/{token}',
-    'USERNAME_RESET_CONFIRM_URL': '#/username/reset/confirm/{uid}/{token}',
-    'ACTIVATION_URL': '#/activate/{uid}/{token}',
-    'SEND_ACTIVATION_EMAIL': False,
-    'SERIALIZERS': {},
-}
-
-# SIMPLE_JWT = {
-#     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
-#     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
-#     'ROTATE_REFRESH_TOKENS': True,
-#     'BLACKLIST_AFTER_ROTATION': True,
-#     'ALGORITHM': 'HS256',
-#     'SIGNING_KEY': SECRET_KEY,
-#     'VERIFYING_KEY': None,
-#     'AUDIENCE': None,
-#     'ISSUER': None,
-
-#     'AUTH_HEADER_TYPES': ('Bearer',),
-#     'USER_ID_FIELD': 'id',
-#     'USER_ID_CLAIM': 'user_id',
-
-#     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
-#     'TOKEN_TYPE_CLAIM': 'token_type',
-
-#     'JTI_CLAIM': 'jti',
-
-#     'SLIDING_TOKEN_REFRESH_EXP_CLAIM': 'refresh_exp',
-#     'SLIDING_TOKEN_LIFETIME': timedelta(minutes=1),
-#     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=7),
-# }
 
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True

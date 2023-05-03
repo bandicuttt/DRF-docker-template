@@ -3,11 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from uuid import uuid4
 
 class User(AbstractUser):
-    id = models.UUIDField(
-        default=uuid4(),
-        unique=True,
-        primary_key=True,
-    )
     username = models.CharField(
         max_length = 20,
         unique = True,

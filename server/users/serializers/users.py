@@ -1,20 +1,9 @@
 from rest_framework import serializers
-from django.contrib.auth import get_user_model
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from uuid import uuid4
 
 from users.models.users import User
-
-
-class UserSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
-    class Meta:
-        model = User
-        fields = (
-            'username',
-            'password',
-        )
 
 
 class CreateUserSerializer(serializers.ModelSerializer):
@@ -30,6 +19,10 @@ class CreateUserSerializer(serializers.ModelSerializer):
             'last_name',
         )
     
+    def validate_password(self, value):
+        validate_password(value)
+        return value
+
     def validate(self, attrs):
         email = attrs.get('email', '').strip().lower()
         username = attrs.get('username').strip().lower()
@@ -41,7 +34,6 @@ class CreateUserSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('User with this username is already exists.')
         
         return attrs
-        
     
     def create(self, validated_data):
         user = User.objects.create(
