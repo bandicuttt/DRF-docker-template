@@ -15,6 +15,7 @@ services:
       interval: 5s
       timeout: 10s
       retries: 3
+
   web:
     build:
       dockerfile: Dockerfile
@@ -30,3 +31,36 @@ services:
     ports:
       - "8000:8000"
     restart: always
+
+  redis:
+    image: redis:latest
+    hostname: redis
+    ports:
+      - "6379:6379"
+
+  worker:
+    build:
+      context: .
+    hostname: worker
+    entrypoint: celery
+    command: -A cel_app.app worker --loglevel=info
+    links:
+      - redis
+    depends_on:
+      - redis
+      - db
+    env_file:
+      - .env
+
+  flower:
+    build:
+      context: .
+    hostname: flower
+    entrypoint: celery
+    command: -A cel_app.app flower
+    links:
+      - redis
+    depends_on:
+      - redis
+    ports:
+      - "5555:5555"
