@@ -70,7 +70,7 @@ class LoginAPIView(knox_views.LoginView):
             ]
         )
 )
-class SendEmailConfirmationView(viewsets.ViewSet):
+class SendEmailConfirmationView(viewsets.ViewSet, knox_views.LoginView):
     permission_classes = (AllowAny,)
     http_method_names = ('get','post',)
 
@@ -84,8 +84,8 @@ class SendEmailConfirmationView(viewsets.ViewSet):
         if not user.is_active:
             if not cache.has_key(id):
                 uid = str(uuid.uuid4())
-                cache.set(id, uid, 100)
-                send_email_confirmation.delay(uid, request.user.id)
+                cache.set(id, uid, 3600)
+                send_email_confirmation.delay(id, uid, user.email)
                 return Response({'uuid': uid}, status=status.HTTP_201_CREATED)
             return Response({'uuid': cache.get(id)}, status=status.HTTP_200_OK)
         return Response({'info':'Your email already confirmed'}, status=status.HTTP_200_OK)
@@ -99,5 +99,8 @@ class SendEmailConfirmationView(viewsets.ViewSet):
         if cache.get(pk) == uid:
             cache.delete(pk)
             account_activate.delay(pk)
-            return Response({'info': 'Success'}, status=status.HTTP_200_OK)  
+            user = User.objects.get(id=pk)
+            login(request, user)
+            response = super().post(request, format=None)
+            return Response({'info': 'Success','data':{'authToken':response.data.get('token')}}, status=status.HTTP_200_OK)  
         return Response({'detail': 'Wrong URL address'}, status=status.HTTP_404_NOT_FOUND)

@@ -2,6 +2,7 @@ version: "3.9"
 
 services:
   db:
+    restart: always
     image: postgres:15
     container_name: db_pg
     volumes:
@@ -17,6 +18,8 @@ services:
       retries: 3
 
   web:
+    volumes:
+      - .:/backend
     build:
       dockerfile: Dockerfile
       context: .
@@ -33,12 +36,16 @@ services:
     restart: always
 
   redis:
+    restart: always
     image: redis:latest
     hostname: redis
     ports:
       - "6379:6379"
 
   worker:
+    volumes:
+      - .:/backend
+    restart: always
     build:
       context: .
     hostname: worker
@@ -53,6 +60,7 @@ services:
       - .env
 
   flower:
+    restart: always
     build:
       context: .
     hostname: flower

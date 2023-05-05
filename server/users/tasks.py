@@ -1,8 +1,17 @@
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
 from celery import shared_task
+from django.conf import settings
+from django.core.mail import send_mail
 
 @shared_task
-def send_email_confirmation(user_id,uuid):
-    return {f'127.0.0.1/verification/{user_id}/{uuid}'}
+def send_email_confirmation(user_id, uid, user_email):
+    url = f'{settings.EMAIL_REDIRECT_DOMAIN}/users/email-confirmation/{user_id}/?uuid={uid}'
+    subject = 'PixelCardWallet | Подтверждение email'
+    html_content = render_to_string('email_confirmation.html', {'conf_link': url})
+    msg = EmailMultiAlternatives(subject=subject, from_email=settings.EMAIL_HOST_USER, to=[user_email])
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 # разгружаем ну очень тяжелый запрос
 @shared_task

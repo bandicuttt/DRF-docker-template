@@ -13,7 +13,7 @@ BASE_DIR = root()
 
 
 SECRET_KEY = env.str('SECRET_KEY')
-DEBUG = env.str('DEBUG', default='True')
+DEBUG = env.bool('DEBUG', default=True)
 ALLOWED_HOSTS = env.str('ALLOWED_HOSTS', default='').split(' ')
 
 # Application definition
@@ -104,7 +104,7 @@ DATABASES = {
         'USER': env.str('POSTGRES_USER', 'postgres'),
         'PASSWORD': env.str('POSTGRES_PASSWORD', 'postgres'),
         'HOST': env.str('POSTGRES_HOST', 'db'),
-        'PORT': env.str('POSTGRES_PORT', 5432),
+        'PORT': env.int('POSTGRES_PORT', 5432),
     },
     'extra': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -194,14 +194,28 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = ['*']
 CSRF_COOKIE_SECURE = False
 
-CELERY_BROKER_URL = 'redis://redis:6379/0'
-
+# cache
+REDIS_HOST = env.str('REDIS_HOST','redis')
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-        'LOCATION': 'redis://redis:6379',
+        'LOCATION': f'redis://{REDIS_HOST}:6379',
         'OPTIONS': {
             'db':'1',
         }
     }
 }
+
+# celery
+CELERY_BROKER_URL = f'redis://{REDIS_HOST}:6379/0'
+
+# email
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = env.str('EMAIL_HOST', 'smtp.yandex.ru')
+EMAIL_PORT = env.int('EMAIL_PORT', 465)
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS', False)
+EMAIL_USE_SSL = env.bool('EMAIL_USE_SSL', True)
+EMAIL_HOST_USER = env.str('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = env.str('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL = env.str('DEFAULT_FROM_EMAIL', '')
+EMAIL_REDIRECT_DOMAIN = env.str('EMAIL_REDIRECT_DOMAIN','')
